@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MG Fashion - Admin Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+    .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    h2 { color: #801a26; text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
+    th { background-color: #801a26; color: white; }
+    input[type="number"] { width: 80px; padding: 5px; }
+    button { background-color: #28a745; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px; }
+    button:hover { background-color: #218838; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>🛍️ MG Fashion - Admin Dashboard</h2>
+    <button onclick="loadOrders()" style="background:#007bff; margin-bottom:10px;">🔄 Refresh Orders</button>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Row</th>
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Mobile</th>
+          <th>Item</th>
+          <th>Size</th>
+          <th>Status</th>
+          <th>Bill Amount (₹)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="orderTable">
+        <tr><td colspan="9">Loading orders...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // KIZHA IRUKKA LINK-A UNGA GOOGLE WEB APP LINK-A MATHUNGA
+    const scriptURL = 'YOUR_GOOGLE_WEB_APP_URL_HERE';
+
+    function loadOrders() {
+      document.getElementById('orderTable').innerHTML = '<tr><td colspan="9">Loading orders...</td></tr>';
+      fetch(scriptURL)
+        .then(response => response.json())
+        .then(data => {
+          let tableHTML = "";
+          // Row 1 is header, so start from i = 1
+          for (let i = 1; i < data.length; i++) {
+            let rowNum = i + 1; // Spreadsheet row number
+            let order = data[i];
+            tableHTML += `<tr>
+              <td>${rowNum}</td>
+              <td>${new Date(order[0]).toLocaleDateString()}</td>
+              <td>${order[1]}</td>
+              <td>${order[2]}</td>
+              <td>${order[3]}</td>
+              <td>${order[4]}</td>
+              <td><b>${order[5]}</b></td>
+              <td>
+                <input type="number" id="bill_${rowNum}" value="${order[6] || 0}">
+              </td>
+              <td>
+                <button onclick="updateBill(${rowNum})">Update Bill</button>
+              </td>
+            </tr>`;
+          }
+          document.getElementById('orderTable').innerHTML = tableHTML;
+        });
+    }
+
+    function updateBill(rowNumber) {
